@@ -42,7 +42,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = TreasureMiner.PROJECT_ID)
 public class PoneglyphFragment {
 	private static final Logger LOGGER = LogManager.getLogger(TreasureMiner.PROJECT_ID);
-	private static final ResourceLocation fragmentResource = new ResourceLocation("minecraft", "dirt");
+	private static final ResourceLocation fragmentResource = new ResourceLocation("onepiecemod", "roadponeglyphfragment");
 
 	@SubscribeEvent
 	public static void onItemToss(ItemTossEvent event) {
