@@ -7,24 +7,18 @@ import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jline.builtins.Source.ResourceSource;
 
-import com.google.gson.internal.bind.SqlDateTypeAdapter;
 import com.hammerclock.treasureminer.TreasureMiner;
 import com.hammerclock.treasureminer.types.FragmentStateEnum;
 import com.hammerclock.treasureminer.utils.TreasureMinerDatabase;
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
@@ -35,7 +29,8 @@ public class FragmentCommand {
 	public FragmentCommand(CommandDispatcher<CommandSource> dispatcher)
 	{
 		dispatcher.register(
-				Commands.literal("treasure_miner")
+				Commands.literal("treasure_miner").requires(context -> {
+					return context.hasPermission(4); })
 						.then(Commands.literal("get_fragment_data").executes(context -> {
 							return get_fragment_data(context.getSource());
 						}))
