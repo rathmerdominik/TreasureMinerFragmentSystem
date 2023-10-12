@@ -179,7 +179,7 @@ public class PoneglyphFragment {
 						event.getPlayer().getY(), event.getPlayer().getZ(), itemStack);
 				container.setItem(i, ItemStack.EMPTY);
 				player.drop(itemStack, false);
-				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(), event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 5.0F, 1.0F);
+				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(), event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, Long.MAX_VALUE, 1.0F);
 				event.getPlayer().playNotifySound( SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1.0F, 1.0F);
 				onItemToss(new ItemTossEvent(itemEntity, event.getPlayer()));
 			}
@@ -229,6 +229,8 @@ public class PoneglyphFragment {
 			CompoundNBT tag = itemStack.getOrCreateTag();
 
 			if (!tag.contains("fragmentuuid")) {
+				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(), event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, Long.MAX_VALUE, 1.0F);
+				event.getPlayer().playNotifySound( SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1.0F, 1.0F);
 				tag.putString("fragmentuuid", UUID.randomUUID().toString());
 			}
 
