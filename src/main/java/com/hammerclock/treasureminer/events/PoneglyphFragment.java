@@ -26,6 +26,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -149,13 +152,53 @@ public class PoneglyphFragment {
 	}
 
 	@SubscribeEvent
+	public static void onContainerEvent(PlayerContainerEvent.Open event) {
+		Container container = event.getContainer();
+		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+
+
+		if (event.getPlayer().hasPermissions(4)) {
+			return;
+		}
+		if (container instanceof PlayerContainer) {
+			return;
+		}
+
+		int containerSlots = event.getContainer().slots.size() - (event.getPlayer().inventory.items.size());
+
+		for (int i = 0; i < containerSlots; i++) {
+			Slot slot = event.getContainer().slots.get(i);
+			ItemStack itemStack = slot.getItem();
+
+			ResourceLocation itemRegistryName = itemStack.getItem().getRegistryName();
+			if (slot.hasItem() && itemRegistryName.equals(fragmentResource)) {
+				event.getPlayer().displayClientMessage(
+						new StringTextComponent("You have found a fragment! The Fragment has ejected itself from the container!"), true);
+
+				ItemEntity itemEntity = new ItemEntity(event.getPlayer().level, event.getPlayer().getX(),
+						event.getPlayer().getY(), event.getPlayer().getZ(), itemStack);
+				container.setItem(i, ItemStack.EMPTY);
+				player.drop(itemStack, false);
+				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(), event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 5.0F, 1.0F);
+				event.getPlayer().playNotifySound( SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				onItemToss(new ItemTossEvent(itemEntity, event.getPlayer()));
+			}
+		}
+	}
+
+	@SubscribeEvent
 	public static void onContainerClose(PlayerContainerEvent.Close event) {
 		Container container = event.getContainer();
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 
+
+		if (event.getPlayer().hasPermissions(4)) {
+			return;
+		}
 		if (container instanceof PlayerContainer) {
 			return;
 		}
+
 		int containerSlots = event.getContainer().slots.size() - (event.getPlayer().inventory.items.size());
 
 		for (int i = 0; i < containerSlots; i++) {
