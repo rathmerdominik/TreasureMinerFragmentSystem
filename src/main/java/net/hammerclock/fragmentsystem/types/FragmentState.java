@@ -1,7 +1,7 @@
-package com.hammerclock.treasureminer.types;
+package net.hammerclock.fragmentsystem.types;
 
 public class FragmentState {
-	private String uuid;
+    private String uuid;
     private String name;
     private double x;
     private double y;
@@ -9,7 +9,6 @@ public class FragmentState {
     private FragmentStateEnum state;
     private String reason;
     private Integer fragmentNr;
-
 
     public String getName() {
         return name;
@@ -35,13 +34,13 @@ public class FragmentState {
         return reason;
     }
 
-	public Integer getFragmentNumber() {
-		return fragmentNr;
-	}
+    public Integer getFragmentNumber() {
+        return fragmentNr;
+    }
 
-	public String getUUID() {
-		return uuid;
-	}
+    public String getUUID() {
+        return uuid;
+    }
 
     public void setUuid(String uuid) {
         this.uuid = uuid;

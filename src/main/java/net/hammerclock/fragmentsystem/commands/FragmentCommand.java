@@ -1,4 +1,4 @@
-package com.hammerclock.treasureminer.commands;
+package net.hammerclock.fragmentsystem.commands;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,13 +8,13 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.hammerclock.treasureminer.TreasureMiner;
-import com.hammerclock.treasureminer.types.FragmentStateEnum;
-import com.hammerclock.treasureminer.utils.TreasureMinerDatabase;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.hammerclock.fragmentsystem.FragmentSystem;
+import net.hammerclock.fragmentsystem.types.FragmentStateEnum;
+import net.hammerclock.fragmentsystem.utils.TreasureMinerDatabase;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
@@ -24,13 +24,13 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 
 public class FragmentCommand {
-	private static final Logger LOGGER = LogManager.getLogger(TreasureMiner.PROJECT_ID);
+	private static final Logger LOGGER = LogManager.getLogger(FragmentSystem.PROJECT_ID);
 
-	public FragmentCommand(CommandDispatcher<CommandSource> dispatcher)
-	{
+	public FragmentCommand(CommandDispatcher<CommandSource> dispatcher) {
 		dispatcher.register(
 				Commands.literal("treasure_miner").requires(context -> {
-					return context.hasPermission(4); })
+					return context.hasPermission(4);
+				})
 						.then(Commands.literal("get_fragment_data").executes(context -> {
 							return get_fragment_data(context.getSource());
 						}))
@@ -40,7 +40,7 @@ public class FragmentCommand {
 								.executes(context -> {
 									return clear_fragment_data_by_id(context.getSource(),
 											IntegerArgumentType.getInteger(context, "fragment_nr"));
-						}))));		
+								}))));
 	}
 
 	public int clear_fragment_data(CommandSource source) throws CommandSyntaxException {
@@ -54,14 +54,14 @@ public class FragmentCommand {
 		}
 		return 0;
 	}
-	
+
 	public int clear_fragment_data_by_id(CommandSource source, Integer fragmentNr) {
 		TreasureMinerDatabase tmdb = new TreasureMinerDatabase();
 		Connection conn = tmdb.getConnection();
 
 		try {
 			PreparedStatement stmt = conn.prepareStatement("DELETE FROM fragments WHERE fragment_number = ?");
-			
+
 			stmt.setInt(1, fragmentNr);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -69,22 +69,21 @@ public class FragmentCommand {
 		}
 		return 0;
 	}
-	
-	
+
 	public int get_fragment_data(CommandSource source) throws CommandSyntaxException {
 		TreasureMinerDatabase tmdb = new TreasureMinerDatabase();
 		Connection conn = tmdb.getConnection();
 		StringTextComponent masterComp = new StringTextComponent("==========Fragments==========\n");
 
 		try {
-			
+
 			ResultSet fragments = conn.createStatement().executeQuery("SELECT * FROM fragments");
 			while (fragments.next()) {
-				
+
 				masterComp.append("#############################\n");
 				masterComp.append("Fragment Number: " + fragments.getInt("fragment_number") + "\n");
-				
-				masterComp.append("Owner: " + fragments.getString("player_name") + "\n");		
+
+				masterComp.append("Owner: " + fragments.getString("player_name") + "\n");
 
 				StringTextComponent fragmentComp = new StringTextComponent("Reason: ");
 				StringTextComponent colorText = new StringTextComponent("");
@@ -94,14 +93,14 @@ public class FragmentCommand {
 				if (state == FragmentStateEnum.IN_INVENTORY) {
 					colorText.append(reason).append("\n")
 							.setStyle(Style.EMPTY.withColor(TextFormatting.GREEN));
-				} else if(state == FragmentStateEnum.DROPPED && reason.contentEquals("Player has died")){
+				} else if (state == FragmentStateEnum.DROPPED && reason.contentEquals("Player has died")) {
 					colorText.append(reason).append("\n")
 							.setStyle(Style.EMPTY.withColor(TextFormatting.LIGHT_PURPLE));
 				} else {
 					colorText.append(reason).append("\n")
 							.setStyle(Style.EMPTY.withColor(TextFormatting.RED));
 				}
-  
+
 				TranslationTextComponent clickableText = new TranslationTextComponent("[TP to location]");
 				clickableText.setStyle(
 						Style.EMPTY.withClickEvent(

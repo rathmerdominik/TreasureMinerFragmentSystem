@@ -1,4 +1,4 @@
-package com.hammerclock.treasureminer.events;
+package net.hammerclock.fragmentsystem.events;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,11 +11,10 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.hammerclock.treasureminer.TreasureMiner;
-import com.hammerclock.treasureminer.types.FragmentState;
-import com.hammerclock.treasureminer.types.FragmentStateEnum;
-import com.hammerclock.treasureminer.utils.TreasureMinerDatabase;
-
+import net.hammerclock.fragmentsystem.FragmentSystem;
+import net.hammerclock.fragmentsystem.types.FragmentState;
+import net.hammerclock.fragmentsystem.types.FragmentStateEnum;
+import net.hammerclock.fragmentsystem.utils.TreasureMinerDatabase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -27,7 +26,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -42,10 +40,11 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = TreasureMiner.PROJECT_ID)
+@Mod.EventBusSubscriber(modid = FragmentSystem.PROJECT_ID)
 public class PoneglyphFragment {
-	private static final Logger LOGGER = LogManager.getLogger(TreasureMiner.PROJECT_ID);
-	private static final ResourceLocation fragmentResource = new ResourceLocation("onepiecemod", "roadponeglyphfragment");
+	private static final Logger LOGGER = LogManager.getLogger(FragmentSystem.PROJECT_ID);
+	private static final ResourceLocation fragmentResource = new ResourceLocation("onepiecemod",
+			"roadponeglyphfragment");
 
 	@SubscribeEvent
 	public static void onItemToss(ItemTossEvent event) {
@@ -75,7 +74,7 @@ public class PoneglyphFragment {
 
 			for (ItemStack itemStack : player.inventory.items) {
 				if (!itemStack.isEmpty() && itemStack.getItem().getRegistryName()
-				.equals(fragmentResource)) {
+						.equals(fragmentResource)) {
 					ItemEntity itemEntity = new ItemEntity(world, x, y, z, itemStack);
 					insertOrUpdateFragmentState(player, itemEntity, FragmentStateEnum.DROPPED, "Player has died");
 				}
@@ -92,7 +91,7 @@ public class PoneglyphFragment {
 			ResourceLocation registryName = item.getRegistryName();
 			if (registryName != null) {
 				if (itemStack.getItem().getRegistryName()
-				.equals(fragmentResource)) {
+						.equals(fragmentResource)) {
 					event.setCanceled(true);
 				}
 			}
@@ -156,7 +155,6 @@ public class PoneglyphFragment {
 		Container container = event.getContainer();
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 
-
 		if (event.getPlayer().hasPermissions(4)) {
 			return;
 		}
@@ -173,14 +171,18 @@ public class PoneglyphFragment {
 			ResourceLocation itemRegistryName = itemStack.getItem().getRegistryName();
 			if (slot.hasItem() && itemRegistryName.equals(fragmentResource)) {
 				event.getPlayer().displayClientMessage(
-						new StringTextComponent("You have found a fragment! The Fragment has ejected itself from the container!"), true);
+						new StringTextComponent(
+								"You have found a fragment! The Fragment has ejected itself from the container!"),
+						true);
 
 				ItemEntity itemEntity = new ItemEntity(event.getPlayer().level, event.getPlayer().getX(),
 						event.getPlayer().getY(), event.getPlayer().getZ(), itemStack);
 				container.setItem(i, ItemStack.EMPTY);
 				player.drop(itemStack, false);
-				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(), event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, Long.MAX_VALUE, 1.0F);
-				event.getPlayer().playNotifySound( SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(),
+						event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, Long.MAX_VALUE,
+						1.0F);
+				event.getPlayer().playNotifySound(SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1.0F, 1.0F);
 				onItemToss(new ItemTossEvent(itemEntity, event.getPlayer()));
 			}
 		}
@@ -190,7 +192,6 @@ public class PoneglyphFragment {
 	public static void onContainerClose(PlayerContainerEvent.Close event) {
 		Container container = event.getContainer();
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-
 
 		if (event.getPlayer().hasPermissions(4)) {
 			return;
@@ -229,8 +230,10 @@ public class PoneglyphFragment {
 			CompoundNBT tag = itemStack.getOrCreateTag();
 
 			if (!tag.contains("fragmentuuid")) {
-				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(), event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, Long.MAX_VALUE, 1.0F);
-				event.getPlayer().playNotifySound( SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				event.getPlayer().level.playSound(event.getPlayer(), event.getPlayer().getX(), event.getPlayer().getY(),
+						event.getPlayer().getZ(), SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, Long.MAX_VALUE,
+						1.0F);
+				event.getPlayer().playNotifySound(SoundEvents.BEACON_POWER_SELECT, SoundCategory.BLOCKS, 1.0F, 1.0F);
 				tag.putString("fragmentuuid", UUID.randomUUID().toString());
 			}
 
@@ -244,53 +247,54 @@ public class PoneglyphFragment {
 			FragmentStateEnum state,
 			String reason) {
 
-			CompoundNBT tag = fragment.getItem().getOrCreateTag();
+		CompoundNBT tag = fragment.getItem().getOrCreateTag();
 
-			if (!tag.contains("fragmentuuid"))
-				return;
-			
-			TreasureMinerDatabase tmDb = new TreasureMinerDatabase();
-			Connection dbConn = tmDb.getConnection();
+		if (!tag.contains("fragmentuuid"))
+			return;
 
-			FragmentState fragmentData = new FragmentState();
+		TreasureMinerDatabase tmDb = new TreasureMinerDatabase();
+		Connection dbConn = tmDb.getConnection();
 
-			fragmentData.setUuid(tag.getString("fragmentuuid"));
-			fragmentData.setName(player.getDisplayName().getString());
-			fragmentData.setX(fragment.getX());
-			fragmentData.setY(fragment.getY());
-			fragmentData.setZ(fragment.getZ());
-			fragmentData.setState(state);
-			fragmentData.setReason(reason);
+		FragmentState fragmentData = new FragmentState();
 
-			try {
-				ResultSet res = dbConn.createStatement().executeQuery("SELECT COUNT(uuid) AS total FROM fragments");
+		fragmentData.setUuid(tag.getString("fragmentuuid"));
+		fragmentData.setName(player.getDisplayName().getString());
+		fragmentData.setX(fragment.getX());
+		fragmentData.setY(fragment.getY());
+		fragmentData.setZ(fragment.getZ());
+		fragmentData.setState(state);
+		fragmentData.setReason(reason);
 
-				PreparedStatement checkIsInDatabase = dbConn.prepareStatement("SELECT fragment_number, COUNT(uuid) AS total FROM fragments WHERE uuid = ?");
-				checkIsInDatabase.setString(1, tag.getString("fragmentuuid"));
-				ResultSet databaseMatches = checkIsInDatabase.executeQuery();
+		try {
+			ResultSet res = dbConn.createStatement().executeQuery("SELECT COUNT(uuid) AS total FROM fragments");
 
-				Integer matches = 0;
-				Integer fragmentNr = -1;
-				while (databaseMatches.next()) {
-					matches = databaseMatches.getInt("total");
-					fragmentNr = databaseMatches.getInt("fragment_number");
-				}
+			PreparedStatement checkIsInDatabase = dbConn
+					.prepareStatement("SELECT fragment_number, COUNT(uuid) AS total FROM fragments WHERE uuid = ?");
+			checkIsInDatabase.setString(1, tag.getString("fragmentuuid"));
+			ResultSet databaseMatches = checkIsInDatabase.executeQuery();
 
-				while (res.next()) {
-					if (matches == 0) {
-						fragmentData.setFragmentNr(res.getInt("total") + 1);
-					} else {
-						fragmentData.setFragmentNr(fragmentNr);
-					}
-				}
-				
-			} catch (SQLException e) {
-				LOGGER.warn(e.getSQLState());
-				LOGGER.warn(e.getStackTrace().toString());
-				LOGGER.error(e.getMessage());
+			Integer matches = 0;
+			Integer fragmentNr = -1;
+			while (databaseMatches.next()) {
+				matches = databaseMatches.getInt("total");
+				fragmentNr = databaseMatches.getInt("fragment_number");
 			}
-			
-			replaceIntoTable(fragmentData);
+
+			while (res.next()) {
+				if (matches == 0) {
+					fragmentData.setFragmentNr(res.getInt("total") + 1);
+				} else {
+					fragmentData.setFragmentNr(fragmentNr);
+				}
+			}
+
+		} catch (SQLException e) {
+			LOGGER.warn(e.getSQLState());
+			LOGGER.warn(e.getStackTrace().toString());
+			LOGGER.error(e.getMessage());
+		}
+
+		replaceIntoTable(fragmentData);
 	}
 
 	public static void replaceIntoTable(FragmentState fragmentData) {
@@ -299,9 +303,9 @@ public class PoneglyphFragment {
 
 		try {
 			String query = new StringBuilder()
-				.append("REPLACE INTO Fragments ")
-				.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-				.toString();
+					.append("REPLACE INTO Fragments ")
+					.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+					.toString();
 			PreparedStatement stmt = dbConn.prepareStatement(query);
 
 			stmt.setString(1, fragmentData.getUUID());
@@ -312,7 +316,7 @@ public class PoneglyphFragment {
 			stmt.setString(6, fragmentData.getState().toString());
 			stmt.setString(7, fragmentData.getReason());
 			stmt.setInt(8, fragmentData.getFragmentNumber());
-			
+
 			stmt.executeUpdate();
 
 			dbConn.close();

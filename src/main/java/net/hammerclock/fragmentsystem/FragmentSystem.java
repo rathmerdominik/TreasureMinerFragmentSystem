@@ -1,5 +1,7 @@
-package com.hammerclock.treasureminer;
+package net.hammerclock.fragmentsystem;
 
+import net.hammerclock.fragmentsystem.commands.FragmentCommand;
+import net.hammerclock.fragmentsystem.utils.TreasureMinerDatabase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -18,16 +20,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.hammerclock.treasureminer.commands.FragmentCommand;
-import com.hammerclock.treasureminer.utils.TreasureMinerDatabase;
-
-@Mod(TreasureMiner.PROJECT_ID)
-public class TreasureMiner {
+@Mod(FragmentSystem.PROJECT_ID)
+public class FragmentSystem {
     public static final String PROJECT_ID = "fragment_system";
-    public static final Logger LOGGER = LogManager.getLogger(TreasureMiner.PROJECT_ID);
+    public static final Logger LOGGER = LogManager.getLogger(FragmentSystem.PROJECT_ID);
 
-    public TreasureMiner() {
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+    public FragmentSystem() {
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST,
+                () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         ModLoadingContext.get().registerExtensionPoint(null, null);
         MinecraftForge.EVENT_BUS.register(this);
@@ -46,6 +46,7 @@ public class TreasureMiner {
     public void onServerStarting(FMLServerStartingEvent event) {
         new FragmentCommand(event.getServer().getCommands().getDispatcher());
     }
+
     public void createFragmentTable(Connection dbConn) {
         StringBuilder sql = new StringBuilder()
                 .append("CREATE TABLE IF NOT EXISTS Fragments (")

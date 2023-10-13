@@ -1,4 +1,4 @@
-package com.hammerclock.treasureminer.utils;
+package net.hammerclock.fragmentsystem.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,14 +7,13 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.hammerclock.treasureminer.TreasureMiner;
-
+import net.hammerclock.fragmentsystem.FragmentSystem;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 public class TreasureMinerDatabase {
 	private String dbUrl = String.format("jdbc:sqlite:%s/treasure_miner.db", FMLPaths.GAMEDIR.get().toString());
 	private Connection connection;
-	private static final Logger LOGGER = LogManager.getLogger(TreasureMiner.PROJECT_ID);
+	private static final Logger LOGGER = LogManager.getLogger(FragmentSystem.PROJECT_ID);
 
 	public TreasureMinerDatabase() {
 		try {
