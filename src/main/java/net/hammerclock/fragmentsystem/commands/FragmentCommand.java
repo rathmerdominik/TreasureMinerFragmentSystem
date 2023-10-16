@@ -48,7 +48,7 @@ public class FragmentCommand {
 		Connection conn = tmdb.getConnection();
 
 		try {
-			conn.createStatement().executeQuery("DELETE FROM fragments");
+			conn.createStatement().executeUpdate("DELETE FROM fragments");
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage());
 		}
