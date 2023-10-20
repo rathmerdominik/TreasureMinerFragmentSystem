@@ -43,8 +43,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = FragmentSystem.PROJECT_ID)
 public class PoneglyphFragment {
 	private static final Logger LOGGER = LogManager.getLogger(FragmentSystem.PROJECT_ID);
-	private static final ResourceLocation fragmentResource = new ResourceLocation("onepiecemod",
-			"roadponeglyphfragment");
+	private static final ResourceLocation fragmentResource = new ResourceLocation("fragment_system",
+			"road_poneglyph_fragment");
 
 	@SubscribeEvent
 	public static void onItemToss(ItemTossEvent event) {

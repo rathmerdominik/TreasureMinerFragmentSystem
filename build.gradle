@@ -125,7 +125,6 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     
     shadow('org.xerial:sqlite-jdbc:3.43.0.0')
-    // implementation files('libs/OnePieceModels-1.1.1.jar')
     
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
